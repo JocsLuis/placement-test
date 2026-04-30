@@ -1,192 +1,436 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>CEVAZ Placement Test - Photo Version</title>
     <style>
-        :root { --blue: #004a99; --gold: #f4b400; --red: #d9534f; }
-        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
-        .container { background: white; max-width: 550px; width: 100%; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
-        video { width: 100%; border-radius: 10px; background: #000; margin-bottom: 10px; transform: scaleX(-1); border: 2px solid var(--blue); }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
-        .btn-next { background: var(--blue); color: white; border: none; font-weight: bold; cursor: pointer; }
-        .btn-stop { background: var(--red); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .btn-mic { background: #d9534f; color: white; width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; }
-        .btn-mic.active { background: #5cb85c; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        .hidden { display: none; }
-        #q-text { min-height: 60px; display: flex; align-items: center; justify-content: center; color: var(--blue); font-weight: bold; }
-        #summary { text-align: left; background: #e8f0fe; padding: 15px; border-radius: 10px; font-size: 0.9rem; }
+      :root {
+        --blue: #004a99;
+        --gold: #f4b400;
+        --red: #d9534f;
+      }
+      body {
+        font-family: sans-serif;
+        background: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+      }
+      .container {
+        background: white;
+        max-width: 550px;
+        width: 100%;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      video {
+        width: 100%;
+        border-radius: 10px;
+        background: #000;
+        margin-bottom: 10px;
+        transform: scaleX(-1);
+        border: 2px solid var(--blue);
+      }
+      input,
+      select,
+      button {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      .btn-next {
+        background: var(--blue);
+        color: white;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .btn-stop {
+        background: var(--red);
+        color: white;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      .btn-mic {
+        background: #d9534f;
+        color: white;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+      }
+      .btn-mic.active {
+        background: #5cb85c;
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .hidden {
+        display: none;
+      }
+      #q-text {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--blue);
+        font-weight: bold;
+      }
+      #summary {
+        text-align: left;
+        background: #e8f0fe;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+      }
     </style>
-</head>
-<body>
-
-<div class="container">
-    <div id="setup">
-        <h2 style="color:var(--blue)">Oral Placement Test</h2>
+  </head>
+  <body>
+    <div class="container">
+      <div id="setup">
+        <h2 style="color: var(--blue)">Oral Placement Test</h2>
         <p>Asegúrate de estar en un lugar iluminado para la foto inicial.</p>
-        <video id="v-setup" autoplay muted playsinline style="width: 100%; height: auto;"></video>
-        <input type="text" id="stdName" placeholder="Nombre Completo">
-        <input type="text" id="stdId" placeholder="Cédula de Identidad">
+        <video
+          id="v-setup"
+          autoplay
+          muted
+          playsinline
+          style="width: 100%; height: auto"
+        ></video>
+        <input type="text" id="stdName" placeholder="Nombre Completo" />
+        <input type="text" id="stdId" placeholder="Cédula de Identidad" />
         <select id="sede">
-            <option value="LAS MERCEDES">LAS MERCEDES</option>
-            <option value="LA LIMPIA">LA LIMPIA</option>
-            <option value="SAN FRANCISCO">SAN FRANCISCO</option>
-            <option value="CEVAZ DIGITAL">CEVAZ DIGITAL</option>
+          <option value="LAS MERCEDES">LAS MERCEDES</option>
+          <option value="LA LIMPIA">LA LIMPIA</option>
+          <option value="SAN FRANCISCO">SAN FRANCISCO</option>
+          <option value="CEVAZ DIGITAL">CEVAZ DIGITAL</option>
         </select>
         <button class="btn-next" onclick="initTest()">EMPEZAR EXAMEN</button>
-    </div>
+      </div>
 
-    <div id="test" class="hidden">
-        <video id="v-monitor" autoplay muted playsinline style="width: 150px; height: auto; border: 2px solid var(--red); margin: 0 auto 15px auto;"></video>
-        <div id="q-text" style="font-size: 1.2rem; margin-bottom: 15px;"></div>
-        <button class="btn-mic" id="m-btn" onclick="toggleMic()">🎤</button>
+      <div id="test" class="hidden">
+        <video
+          id="v-monitor"
+          autoplay
+          muted
+          playsinline
+          style="
+            width: 150px;
+            height: auto;
+            border: 2px solid var(--red);
+            margin: 0 auto 15px auto;
+          "
+        ></video>
+        <div id="q-text" style="font-size: 1.2rem; margin-bottom: 15px"></div>
+        <button class="btn-mic" id="m-btn">🎤</button>
         <p id="status-msg">Toca el micrófono para responder</p>
-        <textarea id="t-area" rows="4" readonly style="width: 100%; color: #444; background: #f9f9f9; border: 1px dashed #ccc;"></textarea>
-        
-        <button class="btn-next" id="n-btn" onclick="saveAndNext()" disabled>SIGUIENTE PREGUNTA</button>
-        
-        <button class="btn-stop" onclick="finish()">FINALIZAR EVALUACIÓN AQUÍ</button>
-    </div>
+        <textarea
+          id="t-area"
+          rows="4"
+          readonly
+          style="
+            width: 100%;
+            color: #444;
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+          "
+        ></textarea>
 
-    <canvas id="canvas-photo" class="hidden" width="640" height="480"></canvas>
+        <button class="btn-next" id="n-btn" onclick="saveAndNext()" disabled>
+          SIGUIENTE PREGUNTA
+        </button>
 
-    <div id="report" class="hidden">
-        <h2 style="color:var(--blue)">Enviando Resultados...</h2>
+        <button class="btn-stop" onclick="finish()">
+          FINALIZAR EVALUACIÓN AQUÍ
+        </button>
+      </div>
+
+      <canvas
+        id="canvas-photo"
+        class="hidden"
+        width="640"
+        height="480"
+      ></canvas>
+
+      <div id="report" class="hidden">
+        <h2 style="color: var(--blue)">Enviando Resultados...</h2>
         <p id="upload-status">⏳ Procesando reporte y foto...</p>
         <div id="summary"></div>
         <button class="btn-next" onclick="location.reload()">SALIR</button>
+      </div>
     </div>
-</div>
 
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvQyDXCbxYQBRZMFe-XiHYUtQhuJZQqQgUgDGX4WNa6KDBSGXYELrXbVIyq1L4yteO/exec"; 
-    
-    const questions = [
-        { lvl: 1, q: "What is your full name, where are you from, and what do you do?, Describe your family" },
-        { lvl: 2, q: "Describe your typical morning routine. What time do you wake up and what do you do?" },
-        { lvl: 3, q: "What did you do on your last vacation or birthday? Tell me about it." },
-        { lvl: 4, q: "Tell me about your favorite hobbies. How often do you do them and why do you like them?" },
-        { lvl: 5, q: "Compare your hometown to another city you know. Which one is better to live in and why?" },
-        { lvl: 6, q: "Have you ever traveled to a different country or tried a very unusual food? Tell me about that experience." },
-        { lvl: 7, q: "What is something you used to do when you were a child that you don't do anymore? How has your life changed?" },
-        { lvl: 8, q: "What will you do if you have a lot of free time next weekend? Do you have any special plans?" },
-        { lvl: 9, q: "If you won the lottery tomorrow, what would you do with the money and how would your life change?" },
-        { lvl: 10, q: "How long have you been studying English or working in your current job? What do you enjoy most about it?" },
-        { lvl: 11, q: "The pyramids in Egypt are a great mystery. How could they have been built without modern technology? Discuss what must have been done by the workers." },
-        { lvl: 12, q: "Think about a mistake you made in the past. What would have happened if you had done things differently?" },
-        { lvl: 13, q: "Do you believe that social media brings people closer together or makes them more isolated? Explain your point of view." },
-        { lvl: 14, q: "What are some things you look forward to doing in the next five years, and what do you hope to have achieved by then?" },
-        { lvl: 15, q: "Describe a global issue that you feel strongly about (like climate change or technology). What is being done to solve it, and what more should be done?" },
-        { lvl: 16, q: "If you had chosen a completely different career path or field of study when you were younger, how do you think your life would be different today?" },
-        { lvl: 17, q: "Some people argue that formal education is becoming less relevant in the modern world due to the internet. To what extent do you agree or disagree?" },
-        { lvl: 18, q: "Looking at your life so far, what are some things you wish you had known when you were younger, and why?" },
-        { lvl: 19, q: "It is often said that history repeats itself. Can you think of any current events that mirror the past? How can society avoid making the same mistakes?" },
-        { lvl: 20, q: "If you were responsible for solving a major global crisis, such as economic inequality or an environmental disaster, what policies would you implement and how would you handle the public reaction?" }
-    ];
+    <script>
+      const SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbwvQyDXCbxYQBRZMFe-XiHYUtQhuJZQqQgUgDGX4WNa6KDBSGXYELrXbVIyq1L4yteO/exec";
 
-    let currentIdx = 0, results = [], isRec = false, stream, studentPhoto = "";
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'en-US';
-    recognition.continuous = true;
+      const questions = [
+        {
+          lvl: 1,
+          q: "What is your full name, where are you from, and what do you do?, Describe your family",
+        },
+        {
+          lvl: 2,
+          q: "Describe your typical morning routine. What time do you wake up and what do you do?",
+        },
+        {
+          lvl: 3,
+          q: "What did you do on your last vacation or birthday? Tell me about it.",
+        },
+        {
+          lvl: 4,
+          q: "Tell me about your favorite hobbies. How often do you do them and why do you like them?",
+        },
+        {
+          lvl: 5,
+          q: "Compare your hometown to another city you know. Which one is better to live in and why?",
+        },
+        {
+          lvl: 6,
+          q: "Have you ever traveled to a different country or tried a very unusual food? Tell me about that experience.",
+        },
+        {
+          lvl: 7,
+          q: "What is something you used to do when you were a child that you don't do anymore? How has your life changed?",
+        },
+        {
+          lvl: 8,
+          q: "What will you do if you have a lot of free time next weekend? Do you have any special plans?",
+        },
+        {
+          lvl: 9,
+          q: "If you won the lottery tomorrow, what would you do with the money and how would your life change?",
+        },
+        {
+          lvl: 10,
+          q: "How long have you been studying English or working in your current job? What do you enjoy most about it?",
+        },
+        {
+          lvl: 11,
+          q: "The pyramids in Egypt are a great mystery. How could they have been built without modern technology? Discuss what must have been done by the workers.",
+        },
+        {
+          lvl: 12,
+          q: "Think about a mistake you made in the past. What would have happened if you had done things differently?",
+        },
+        {
+          lvl: 13,
+          q: "Do you believe that social media brings people closer together or makes them more isolated? Explain your point of view.",
+        },
+        {
+          lvl: 14,
+          q: "What are some things you look forward to doing in the next five years, and what do you hope to have achieved by then?",
+        },
+        {
+          lvl: 15,
+          q: "Describe a global issue that you feel strongly about (like climate change or technology). What is being done to solve it, and what more should be done?",
+        },
+        {
+          lvl: 16,
+          q: "If you had chosen a completely different career path or field of study when you were younger, how do you think your life would be different today?",
+        },
+        {
+          lvl: 17,
+          q: "Some people argue that formal education is becoming less relevant in the modern world due to the internet. To what extent do you agree or disagree?",
+        },
+        {
+          lvl: 18,
+          q: "Looking at your life so far, what are some things you wish you had known when you were younger, and why?",
+        },
+        {
+          lvl: 19,
+          q: "It is often said that history repeats itself. Can you think of any current events that mirror the past? How can society avoid making the same mistakes?",
+        },
+        {
+          lvl: 20,
+          q: "If you were responsible for solving a major global crisis, such as economic inequality or an environmental disaster, what policies would you implement and how would you handle the public reaction?",
+        },
+      ];
 
-    window.onload = async () => {
+      let currentIdx = 0,
+        results = [],
+        isRec = false,
+        stream,
+        studentPhoto = "",
+        micWasPressedForCurrentQuestion = false;
+      const recognition = new (
+        window.SpeechRecognition || window.webkitSpeechRecognition
+      )();
+      recognition.lang = "en-US";
+      recognition.continuous = true;
+
+      window.onload = async () => {
         try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-            document.getElementById('v-setup').srcObject = stream;
-        } catch (e) { alert("Acceso a cámara denegado."); }
-    };
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+          document.getElementById("v-setup").srcObject = stream;
+        } catch (e) {
+          alert("Acceso a cámara denegado.");
+        }
 
-    async function initTest() {
-        if(!document.getElementById('stdName').value || !document.getElementById('stdId').value) return alert("Por favor ingresa tus datos.");
-        
-        const video = document.getElementById('v-setup');
-        const canvas = document.getElementById('canvas-photo');
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        studentPhoto = canvas.toDataURL('image/jpeg').split(',')[1];
+        const mBtn = document.getElementById("m-btn");
+        mBtn.addEventListener("mousedown", () => {
+          if (!isRec) {
+            recognition.start();
+            isRec = true;
+            mBtn.classList.add("active");
+            document.getElementById("status-msg").innerText = "ESCUCHANDO...";
+            micWasPressedForCurrentQuestion = true;
+            document.getElementById("n-btn").disabled = false;
+          }
+        });
+        mBtn.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          if (!isRec) {
+            recognition.start();
+            isRec = true;
+            mBtn.classList.add("active");
+            document.getElementById("status-msg").innerText = "ESCUCHANDO...";
+            micWasPressedForCurrentQuestion = true;
+            document.getElementById("n-btn").disabled = false;
+          }
+        });
+        mBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (isRec) {
+            recognition.stop();
+            isRec = false;
+            mBtn.classList.remove("active");
+            document.getElementById("status-msg").innerText = "PAUSADO";
+          }
+        });
+        mBtn.addEventListener("touchend", (e) => {
+          e.preventDefault();
+          if (isRec) {
+            recognition.stop();
+            isRec = false;
+            mBtn.classList.remove("active");
+            document.getElementById("status-msg").innerText = "PAUSADO";
+          }
+        });
+      };
+
+      async function initTest() {
+        if (
+          !document.getElementById("stdName").value ||
+          !document.getElementById("stdId").value
+        )
+          return alert("Por favor ingresa tus datos.");
+
+        const video = document.getElementById("v-setup");
+        const canvas = document.getElementById("canvas-photo");
+        canvas
+          .getContext("2d")
+          .drawImage(video, 0, 0, canvas.width, canvas.height);
+        studentPhoto = canvas.toDataURL("image/jpeg").split(",")[1];
 
         // Mantenemos la cámara encendida en el video de monitoreo
-        document.getElementById('v-monitor').srcObject = stream;
+        document.getElementById("v-monitor").srcObject = stream;
 
-        document.getElementById('setup').classList.add('hidden');
-        document.getElementById('test').classList.remove('hidden');
+        document.getElementById("setup").classList.add("hidden");
+        document.getElementById("test").classList.remove("hidden");
         loadStep();
-    }
+      }
 
-    function loadStep() {
-        document.getElementById('q-text').innerText = questions[currentIdx].q;
-        document.getElementById('t-area').value = "";
-        document.getElementById('n-btn').disabled = true;
-    }
+      function loadStep() {
+        document.getElementById("q-text").innerText = questions[currentIdx].q;
+        document.getElementById("t-area").value = "";
+        document.getElementById("n-btn").disabled = true;
+        micWasPressedForCurrentQuestion = false;
+      }
 
-    function toggleMic() {
-        if(!isRec) {
-            recognition.start(); 
-            isRec = true;
-            document.getElementById('m-btn').classList.add('active');
-            document.getElementById('status-msg').innerText = "ESCUCHANDO...";
-        } else {
-            recognition.stop(); 
-            isRec = false;
-            document.getElementById('m-btn').classList.remove('active');
-            document.getElementById('status-msg').innerText = "PAUSADO";
-        }
-    }
-
-    recognition.onresult = e => {
-        // Acumulación de texto para permitir pausas al hablar
+      recognition.onresult = (e) => {
         for (let i = e.resultIndex; i < e.results.length; ++i) {
-            if (e.results[i].isFinal) {
-                document.getElementById('t-area').value += e.results[i][0].transcript + " ";
-            }
+          if (e.results[i].isFinal) {
+            document.getElementById("t-area").value +=
+              e.results[i][0].transcript + " ";
+          }
         }
-        document.getElementById('n-btn').disabled = false;
-    };
+      };
 
-    function saveAndNext() {
-        results.push({ lvl: questions[currentIdx].lvl, q: questions[currentIdx].q, a: document.getElementById('t-area').value });
-        if(currentIdx === questions.length - 1) {
-            finish();
+      function saveAndNext() {
+        results.push({
+          lvl: questions[currentIdx].lvl,
+          q: questions[currentIdx].q,
+          a: document.getElementById("t-area").value,
+        });
+        if (currentIdx === questions.length - 1) {
+          finish();
         } else {
-            currentIdx++;
-            loadStep();
+          currentIdx++;
+          loadStep();
         }
-    }
+      }
 
-    function finish() {
-        if(document.getElementById('t-area').value && (!results.length || results[results.length-1].lvl !== questions[currentIdx].lvl)) {
-            results.push({ lvl: questions[currentIdx].lvl, q: questions[currentIdx].q, a: document.getElementById('t-area').value });
+      function finish() {
+        if (
+          document.getElementById("t-area").value &&
+          (!results.length ||
+            results[results.length - 1].lvl !== questions[currentIdx].lvl)
+        ) {
+          results.push({
+            lvl: questions[currentIdx].lvl,
+            q: questions[currentIdx].q,
+            a: document.getElementById("t-area").value,
+          });
         }
 
-        document.getElementById('test').classList.add('hidden');
-        document.getElementById('report').classList.remove('hidden');
-        
-        if(stream) stream.getTracks().forEach(t => t.stop());
+        document.getElementById("test").classList.add("hidden");
+        document.getElementById("report").classList.remove("hidden");
+
+        if (stream) stream.getTracks().forEach((t) => t.stop());
         upload();
-    }
+      }
 
-    async function upload() {
+      async function upload() {
         // Obtenemos el nivel máximo basado en el último nivel que el alumno respondió
-        const finalLevel = results.length > 0 ? results[results.length - 1].lvl : 0;
+        const finalLevel =
+          results.length > 0 ? results[results.length - 1].lvl : 0;
 
         const payload = {
-            name: document.getElementById('stdName').value,
-            id: document.getElementById('stdId').value,
-            sede: document.getElementById('sede').value,
-            fecha: new Date().toLocaleDateString(),
-            level: finalLevel, // Enviamos el número para el "Nivel Máximo Sugerido"
-            transcript: results.map(r => `[Lvl ${r.lvl}] ${r.a}`).join('\n\n'),
-            photo: studentPhoto
+          name: document.getElementById("stdName").value,
+          id: document.getElementById("stdId").value,
+          sede: document.getElementById("sede").value,
+          fecha: new Date().toLocaleDateString(),
+          level: finalLevel, // Enviamos el número para el "Nivel Máximo Sugerido"
+          transcript: results.map((r) => `[Lvl ${r.lvl}] ${r.a}`).join("\n\n"),
+          photo: studentPhoto,
         };
 
         try {
-            await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-            document.getElementById('upload-status').innerText = "✅ ¡Prueba completada!";
-            document.getElementById('summary').innerHTML = `Tus respuestas y foto han sido enviadas exitosamente.`;
-        } catch (e) { 
-            document.getElementById('upload-status').innerText = "❌ Error al enviar datos."; 
+          await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          document.getElementById("upload-status").innerText =
+            "✅ ¡Prueba completada!";
+          document.getElementById("summary").innerHTML =
+            `Tus respuestas y foto han sido enviadas exitosamente.`;
+        } catch (e) {
+          document.getElementById("upload-status").innerText =
+            "❌ Error al enviar datos.";
         }
-    }
-</script>
-</body>
+      }
+    </script>
+  </body>
 </html>
