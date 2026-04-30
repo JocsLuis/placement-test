@@ -92,7 +92,7 @@
 
     window.onload = async () => {
         try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
             document.getElementById('v-setup').srcObject = stream;
         } catch (e) { alert("Acceso a cámara denegado."); }
     };
