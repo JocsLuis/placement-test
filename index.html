@@ -4,93 +4,20 @@
     <meta charset="UTF-8" />
     <title>CEVAZ Placement Test - Photo Version</title>
     <style>
-      :root {
-        --blue: #004a99;
-        --gold: #f4b400;
-        --red: #d9534f;
-      }
-      body {
-        font-family: sans-serif;
-        background: #f0f2f5;
-        display: flex;
-        justify-content: center;
-        padding: 20px;
-      }
-      .container {
-        background: white;
-        max-width: 550px;
-        width: 100%;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        text-align: center;
-      }
-      video {
-        width: 100%;
-        border-radius: 10px;
-        background: #000;
-        margin-bottom: 10px;
-        transform: scaleX(-1);
-        border: 2px solid var(--blue);
-      }
-      input, select, button {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      }
-      .btn-next {
-        background: var(--blue);
-        color: white;
-        border: none;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .btn-stop {
-        background: var(--red);
-        color: white;
-        border: none;
-        font-weight: bold;
-        cursor: pointer;
-        margin-top: 20px;
-      }
-      .btn-mic {
-        background: #d9534f;
-        color: white;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-      }
-      .btn-mic.active {
-        background: #5cb85c;
-        animation: pulse 1.5s infinite;
-      }
-      @keyframes pulse {
-        0%   { transform: scale(1);   }
-        50%  { transform: scale(1.1); }
-        100% { transform: scale(1);   }
-      }
+      :root { --blue: #004a99; --gold: #f4b400; --red: #d9534f; }
+      body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+      .container { background: white; max-width: 550px; width: 100%; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
+      video { width: 100%; border-radius: 10px; background: #000; margin-bottom: 10px; transform: scaleX(-1); border: 2px solid var(--blue); }
+      input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+      .btn-next { background: var(--blue); color: white; border: none; font-weight: bold; cursor: pointer; }
+      .btn-stop { background: var(--red); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; }
+      .btn-mic { background: #d9534f; color: white; width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; }
+      .btn-mic.active { background: #5cb85c; animation: pulse 1.5s infinite; }
+      @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
       .hidden { display: none; }
-      #q-text {
-        min-height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--blue);
-        font-weight: bold;
-      }
-      #summary {
-        text-align: left;
-        background: #e8f0fe;
-        padding: 15px;
-        border-radius: 10px;
-        font-size: 0.9rem;
-      }
+      #q-text { min-height: 60px; display: flex; align-items: center; justify-content: center; color: var(--blue); font-weight: bold; }
+      #summary { text-align: left; background: #e8f0fe; padding: 15px; border-radius: 10px; font-size: 0.9rem; }
+      #debug-box { background:#111; color:#0f0; font-family:monospace; font-size:11px; text-align:left; padding:8px; border-radius:6px; margin-top:10px; max-height:120px; overflow-y:auto; display:none; }
     </style>
   </head>
   <body>
@@ -113,16 +40,16 @@
 
       <div id="test" class="hidden">
         <video id="v-monitor" autoplay muted playsinline
-          style="width:150px;height:auto;border:2px solid var(--red);margin:0 auto 15px auto;">
-        </video>
+          style="width:150px;height:auto;border:2px solid var(--red);margin:0 auto 15px auto;"></video>
         <div id="q-text" style="font-size:1.2rem;margin-bottom:15px"></div>
         <button class="btn-mic" id="m-btn">🎤</button>
         <p id="status-msg">Toca el micrófono para responder</p>
         <textarea id="t-area" rows="4" readonly
-          style="width:100%;color:#444;background:#f9f9f9;border:1px dashed #ccc;">
-        </textarea>
+          style="width:100%;color:#444;background:#f9f9f9;border:1px dashed #ccc;"></textarea>
         <button class="btn-next" id="n-btn" onclick="saveAndNext()" disabled>SIGUIENTE PREGUNTA</button>
         <button class="btn-stop" onclick="finish()">FINALIZAR EVALUACIÓN AQUÍ</button>
+        <!-- Caja de diagnóstico — solo visible si hay problemas -->
+        <div id="debug-box"></div>
       </div>
 
       <canvas id="canvas-photo" class="hidden" width="640" height="480"></canvas>
@@ -162,107 +89,127 @@
         { lvl: 20, q: "If you were responsible for solving a major global crisis, such as economic inequality or an environmental disaster, what policies would you implement and how would you handle the public reaction?" },
       ];
 
-      // ── Estado global ──────────────────────────────────────────────
-      let currentIdx = 0;
-      let results    = [];
-      let stream;
-      let studentPhoto = "";
+      let currentIdx = 0, results = [], stream, studentPhoto = "";
       let micWasPressedForCurrentQuestion = false;
-
-      // Estado del reconocimiento de voz
-      // recState puede ser: "idle" | "starting" | "running" | "stopping"
+      // recState: "idle" | "starting" | "running" | "stopping"
       let recState = "idle";
 
-      // ── SpeechRecognition setup ────────────────────────────────────
+      // ── Debug logger visible en pantalla ──────────────────────────
+      function dbg(msg) {
+        console.log("[MIC]", msg);
+        const box = document.getElementById("debug-box");
+        if (!box) return;
+        box.style.display = "block";
+        box.innerHTML += msg + "<br>";
+        box.scrollTop = box.scrollHeight;
+      }
+
+      // ── SpeechRecognition ─────────────────────────────────────────
       const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognitionAPI) {
         alert("Tu navegador no soporta reconocimiento de voz. Por favor usa Google Chrome.");
       }
-      const recognition = new SpeechRecognitionAPI();
-      recognition.lang = "en-US";
-      recognition.continuous = true;
-      recognition.interimResults = false;
 
-      // Cuando el navegador confirma que arrancó
-      recognition.onstart = () => {
-        recState = "running";
-      };
+      let recognition = null;
 
-      // Cuando el navegador confirma que se detuvo
-      recognition.onend = () => {
-        if (recState === "running") {
-          // Se detuvo solo (silencio largo) — reiniciar automáticamente
-          recState = "starting";
-          setTimeout(() => {
-            try {
-              recognition.start();
-            } catch (e) {
-              recState = "idle";
-              setMicUI(false);
-              document.getElementById("status-msg").innerText = "Toca el micrófono para reintentar";
-            }
-          }, 200);
-        } else {
-          recState = "idle";
+      // Crear una nueva instancia limpia de recognition
+      // Chrome a veces se "atasca" con una instancia vieja — recrearla soluciona esto
+      function buildRecognition() {
+        if (recognition) {
+          try { recognition.abort(); } catch(e) {}
         }
-      };
+        recognition = new SpeechRecognitionAPI();
+        recognition.lang = "en-US";
+        recognition.continuous = true;
+        recognition.interimResults = false;
 
-      recognition.onerror = (e) => {
-        console.warn("Speech recognition error:", e.error);
-        if (e.error === "not-allowed" || e.error === "service-not-allowed") {
-          alert("Permiso de micrófono denegado. Por favor permite el acceso al micrófono en tu navegador.");
-          recState = "idle";
-          setMicUI(false);
-          document.getElementById("status-msg").innerText = "Error de permiso - Revisa el micrófono";
-        }
-        // "no-speech" y "aborted" son normales — no tocar el estado
-      };
+        recognition.onstart = () => {
+          dbg("onstart → running");
+          recState = "running";
+          document.getElementById("m-btn").classList.add("active");
+          document.getElementById("status-msg").innerText = "ESCUCHANDO...";
+        };
 
-      recognition.onresult = (e) => {
-        for (let i = e.resultIndex; i < e.results.length; ++i) {
-          if (e.results[i].isFinal) {
-            document.getElementById("t-area").value += e.results[i][0].transcript + " ";
+        recognition.onend = () => {
+          dbg("onend (recState=" + recState + ")");
+          if (recState === "running") {
+            // Se cayó por silencio — reiniciar
+            recState = "starting";
+            setTimeout(() => {
+              try {
+                dbg("restarting after silence...");
+                recognition.start();
+              } catch(e) {
+                dbg("restart failed: " + e.message);
+                recState = "idle";
+                setMicUI(false);
+                document.getElementById("status-msg").innerText = "Toca el micrófono para reintentar";
+              }
+            }, 250);
+          } else {
+            recState = "idle";
           }
-        }
-      };
+        };
 
-      // ── Helpers UI ─────────────────────────────────────────────────
+        recognition.onerror = (e) => {
+          dbg("onerror: " + e.error);
+          if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+            alert("Permiso de micrófono denegado. Ve a Configuración de Chrome → Privacidad → Micrófonos y permite este sitio.");
+            recState = "idle";
+            setMicUI(false);
+            document.getElementById("status-msg").innerText = "Permiso denegado";
+          } else if (e.error === "audio-capture") {
+            alert("Chrome no puede acceder al micrófono. Verifica que no esté siendo usado por otra aplicación.");
+            recState = "idle";
+            setMicUI(false);
+            document.getElementById("status-msg").innerText = "Micrófono no disponible";
+          }
+          // "no-speech" y "aborted" son normales, no hacer nada
+        };
+
+        recognition.onresult = (e) => {
+          for (let i = e.resultIndex; i < e.results.length; ++i) {
+            if (e.results[i].isFinal) {
+              document.getElementById("t-area").value += e.results[i][0].transcript + " ";
+            }
+          }
+        };
+      }
+
       function setMicUI(active) {
         const btn = document.getElementById("m-btn");
-        if (active) {
-          btn.classList.add("active");
-          document.getElementById("status-msg").innerText = "ESCUCHANDO...";
-        } else {
-          btn.classList.remove("active");
+        if (btn) {
+          if (active) btn.classList.add("active");
+          else btn.classList.remove("active");
         }
       }
 
-      // ── Toggle micrófono (lógica única) ───────────────────────────
       function toggleMic() {
+        dbg("toggleMic called, recState=" + recState);
         if (recState === "idle") {
-          // Arrancar
+          buildRecognition(); // Instancia limpia cada vez que arranca
           recState = "starting";
           try {
             recognition.start();
-            setMicUI(true);
             micWasPressedForCurrentQuestion = true;
             document.getElementById("n-btn").disabled = false;
-          } catch (err) {
+            document.getElementById("status-msg").innerText = "Iniciando...";
+          } catch(err) {
+            dbg("start() threw: " + err.message);
             recState = "idle";
-            console.warn("Error starting recognition:", err);
             document.getElementById("status-msg").innerText = "Error al iniciar - intenta de nuevo";
           }
         } else if (recState === "running") {
-          // Pausar
           recState = "stopping";
           recognition.stop();
           setMicUI(false);
           document.getElementById("status-msg").innerText = "PAUSADO";
+        } else {
+          dbg("ignored tap during transition: " + recState);
         }
-        // Si está "starting" o "stopping", ignorar el tap (transición en curso)
       }
 
-      // ── Eventos del botón micrófono ────────────────────────────────
+      // ── Eventos del botón ─────────────────────────────────────────
       window.onload = async () => {
         try {
           stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
@@ -282,12 +229,12 @@
         });
 
         mBtn.addEventListener("click", () => {
-          if (justTouched) return; // ya manejado por touchend
+          if (justTouched) return;
           toggleMic();
         });
       };
 
-      // ── Flujo del examen ───────────────────────────────────────────
+      // ── Flujo del examen ──────────────────────────────────────────
       async function initTest() {
         if (!document.getElementById("stdName").value || !document.getElementById("stdId").value)
           return alert("Por favor ingresa tus datos.");
@@ -304,12 +251,10 @@
       }
 
       function loadStep() {
-        // Detener el micrófono al cambiar de pregunta
-        if (recState === "running" || recState === "starting") {
-          recState = "stopping";
-          recognition.stop();
-          setMicUI(false);
-        }
+        // Resetear completamente el micrófono — el usuario debe presionarlo de nuevo
+        if (recognition) { try { recognition.abort(); } catch(e) {} }
+        recState = "idle";
+        setMicUI(false);
         document.getElementById("q-text").innerText = questions[currentIdx].q;
         document.getElementById("t-area").value     = "";
         document.getElementById("n-btn").disabled   = true;
@@ -318,17 +263,9 @@
       }
 
       function saveAndNext() {
-        results.push({
-          lvl: questions[currentIdx].lvl,
-          q:   questions[currentIdx].q,
-          a:   document.getElementById("t-area").value,
-        });
-        if (currentIdx === questions.length - 1) {
-          finish();
-        } else {
-          currentIdx++;
-          loadStep();
-        }
+        results.push({ lvl: questions[currentIdx].lvl, q: questions[currentIdx].q, a: document.getElementById("t-area").value });
+        if (currentIdx === questions.length - 1) { finish(); }
+        else { currentIdx++; loadStep(); }
       }
 
       function finish() {
@@ -345,17 +282,17 @@
       async function upload() {
         const finalLevel = results.length > 0 ? results[results.length - 1].lvl : 0;
         const payload = {
-          name:       document.getElementById("stdName").value,
-          id:         document.getElementById("stdId").value,
-          sede:       document.getElementById("sede").value,
-          fecha:      new Date().toLocaleDateString(),
-          level:      finalLevel,
+          name: document.getElementById("stdName").value,
+          id:   document.getElementById("stdId").value,
+          sede: document.getElementById("sede").value,
+          fecha: new Date().toLocaleDateString(),
+          level: finalLevel,
           transcript: results.map((r) => `[Lvl ${r.lvl}] ${r.a}`).join("\n\n"),
-          photo:      studentPhoto,
+          photo: studentPhoto,
         };
         try {
           await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-          document.getElementById("upload-status").innerText  = "✅ ¡Prueba completada!";
+          document.getElementById("upload-status").innerText = "✅ ¡Prueba completada!";
           document.getElementById("summary").innerHTML = "Tus respuestas y foto han sido enviadas exitosamente.";
         } catch (e) {
           document.getElementById("upload-status").innerText = "❌ Error al enviar datos.";
