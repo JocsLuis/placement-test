@@ -334,8 +334,10 @@
         // ✅ FIX PRINCIPAL: Usar solo "click" como toggle para compatibilidad con Chrome desktop.
         // El problema original era que mousedown + click se disparaban juntos en Chrome desktop,
         // haciendo que el micrófono arrancara y se detuviera inmediatamente.
-        mBtn.addEventListener("click", (e) => {
-          e.preventDefault();
+        // Bandera para evitar doble disparo en móvil (touchend + click nativo)
+        let justTouched = false;
+
+        function toggleMic() {
           if (!isRec) {
             try {
               recognition.start();
@@ -355,12 +357,20 @@
             mBtn.classList.remove("active");
             document.getElementById("status-msg").innerText = "PAUSADO";
           }
-        });
+        }
 
-        // ✅ Soporte táctil para móvil (funciona independiente del click)
+        // En móvil, touchend se dispara ANTES del click nativo del navegador.
+        // Usamos justTouched para que el click ignorado no ejecute toggleMic dos veces.
         mBtn.addEventListener("touchend", (e) => {
           e.preventDefault();
-          mBtn.click(); // Reusar la lógica del click
+          justTouched = true;
+          toggleMic();
+          setTimeout(() => { justTouched = false; }, 500);
+        });
+
+        mBtn.addEventListener("click", (e) => {
+          if (justTouched) return; // Ya fue manejado por touchend
+          toggleMic();
         });
       };
 
