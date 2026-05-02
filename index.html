@@ -33,9 +33,7 @@
         transform: scaleX(-1);
         border: 2px solid var(--blue);
       }
-      input,
-      select,
-      button {
+      input, select, button {
         width: 100%;
         padding: 12px;
         margin: 10px 0;
@@ -73,19 +71,11 @@
         animation: pulse 1.5s infinite;
       }
       @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
+        0%   { transform: scale(1);   }
+        50%  { transform: scale(1.1); }
+        100% { transform: scale(1);   }
       }
-      .hidden {
-        display: none;
-      }
+      .hidden { display: none; }
       #q-text {
         min-height: 60px;
         display: flex;
@@ -105,18 +95,13 @@
   </head>
   <body>
     <div class="container">
+
       <div id="setup">
         <h2 style="color: var(--blue)">Oral Placement Test</h2>
         <p>Asegúrate de estar en un lugar iluminado para la foto inicial.</p>
-        <video
-          id="v-setup"
-          autoplay
-          muted
-          playsinline
-          style="width: 100%; height: auto"
-        ></video>
+        <video id="v-setup" autoplay muted playsinline style="width:100%;height:auto"></video>
         <input type="text" id="stdName" placeholder="Nombre Completo" />
-        <input type="text" id="stdId" placeholder="Cédula de Identidad" />
+        <input type="text" id="stdId"   placeholder="Cédula de Identidad" />
         <select id="sede">
           <option value="LAS MERCEDES">LAS MERCEDES</option>
           <option value="LA LIMPIA">LA LIMPIA</option>
@@ -127,48 +112,20 @@
       </div>
 
       <div id="test" class="hidden">
-        <video
-          id="v-monitor"
-          autoplay
-          muted
-          playsinline
-          style="
-            width: 150px;
-            height: auto;
-            border: 2px solid var(--red);
-            margin: 0 auto 15px auto;
-          "
-        ></video>
-        <div id="q-text" style="font-size: 1.2rem; margin-bottom: 15px"></div>
+        <video id="v-monitor" autoplay muted playsinline
+          style="width:150px;height:auto;border:2px solid var(--red);margin:0 auto 15px auto;">
+        </video>
+        <div id="q-text" style="font-size:1.2rem;margin-bottom:15px"></div>
         <button class="btn-mic" id="m-btn">🎤</button>
         <p id="status-msg">Toca el micrófono para responder</p>
-        <textarea
-          id="t-area"
-          rows="4"
-          readonly
-          style="
-            width: 100%;
-            color: #444;
-            background: #f9f9f9;
-            border: 1px dashed #ccc;
-          "
-        ></textarea>
-
-        <button class="btn-next" id="n-btn" onclick="saveAndNext()" disabled>
-          SIGUIENTE PREGUNTA
-        </button>
-
-        <button class="btn-stop" onclick="finish()">
-          FINALIZAR EVALUACIÓN AQUÍ
-        </button>
+        <textarea id="t-area" rows="4" readonly
+          style="width:100%;color:#444;background:#f9f9f9;border:1px dashed #ccc;">
+        </textarea>
+        <button class="btn-next" id="n-btn" onclick="saveAndNext()" disabled>SIGUIENTE PREGUNTA</button>
+        <button class="btn-stop" onclick="finish()">FINALIZAR EVALUACIÓN AQUÍ</button>
       </div>
 
-      <canvas
-        id="canvas-photo"
-        class="hidden"
-        width="640"
-        height="480"
-      ></canvas>
+      <canvas id="canvas-photo" class="hidden" width="640" height="480"></canvas>
 
       <div id="report" class="hidden">
         <h2 style="color: var(--blue)">Enviando Resultados...</h2>
@@ -176,191 +133,147 @@
         <div id="summary"></div>
         <button class="btn-next" onclick="location.reload()">SALIR</button>
       </div>
-    </div>
 
+    </div>
     <script>
       const SCRIPT_URL =
         "https://script.google.com/macros/s/AKfycbwvQyDXCbxYQBRZMFe-XiHYUtQhuJZQqQgUgDGX4WNa6KDBSGXYELrXbVIyq1L4yteO/exec";
 
       const questions = [
-        {
-          lvl: 1,
-          q: "What is your full name, where are you from, and what do you do?, Describe your family",
-        },
-        {
-          lvl: 2,
-          q: "Describe your typical morning routine. What time do you wake up and what do you do?",
-        },
-        {
-          lvl: 3,
-          q: "What did you do on your last vacation or birthday? Tell me about it.",
-        },
-        {
-          lvl: 4,
-          q: "Tell me about your favorite hobbies. How often do you do them and why do you like them?",
-        },
-        {
-          lvl: 5,
-          q: "Compare your hometown to another city you know. Which one is better to live in and why?",
-        },
-        {
-          lvl: 6,
-          q: "Have you ever traveled to a different country or tried a very unusual food? Tell me about that experience.",
-        },
-        {
-          lvl: 7,
-          q: "What is something you used to do when you were a child that you don't do anymore? How has your life changed?",
-        },
-        {
-          lvl: 8,
-          q: "What will you do if you have a lot of free time next weekend? Do you have any special plans?",
-        },
-        {
-          lvl: 9,
-          q: "If you won the lottery tomorrow, what would you do with the money and how would your life change?",
-        },
-        {
-          lvl: 10,
-          q: "How long have you been studying English or working in your current job? What do you enjoy most about it?",
-        },
-        {
-          lvl: 11,
-          q: "The pyramids in Egypt are a great mystery. How could they have been built without modern technology? Discuss what must have been done by the workers.",
-        },
-        {
-          lvl: 12,
-          q: "Think about a mistake you made in the past. What would have happened if you had done things differently?",
-        },
-        {
-          lvl: 13,
-          q: "Do you believe that social media brings people closer together or makes them more isolated? Explain your point of view.",
-        },
-        {
-          lvl: 14,
-          q: "What are some things you look forward to doing in the next five years, and what do you hope to have achieved by then?",
-        },
-        {
-          lvl: 15,
-          q: "Describe a global issue that you feel strongly about (like climate change or technology). What is being done to solve it, and what more should be done?",
-        },
-        {
-          lvl: 16,
-          q: "If you had chosen a completely different career path or field of study when you were younger, how do you think your life would be different today?",
-        },
-        {
-          lvl: 17,
-          q: "Some people argue that formal education is becoming less relevant in the modern world due to the internet. To what extent do you agree or disagree?",
-        },
-        {
-          lvl: 18,
-          q: "Looking at your life so far, what are some things you wish you had known when you were younger, and why?",
-        },
-        {
-          lvl: 19,
-          q: "It is often said that history repeats itself. Can you think of any current events that mirror the past? How can society avoid making the same mistakes?",
-        },
-        {
-          lvl: 20,
-          q: "If you were responsible for solving a major global crisis, such as economic inequality or an environmental disaster, what policies would you implement and how would you handle the public reaction?",
-        },
+        { lvl:  1, q: "What is your full name, where are you from, and what do you do?, Describe your family" },
+        { lvl:  2, q: "Describe your typical morning routine. What time do you wake up and what do you do?" },
+        { lvl:  3, q: "What did you do on your last vacation or birthday? Tell me about it." },
+        { lvl:  4, q: "Tell me about your favorite hobbies. How often do you do them and why do you like them?" },
+        { lvl:  5, q: "Compare your hometown to another city you know. Which one is better to live in and why?" },
+        { lvl:  6, q: "Have you ever traveled to a different country or tried a very unusual food? Tell me about that experience." },
+        { lvl:  7, q: "What is something you used to do when you were a child that you don't do anymore? How has your life changed?" },
+        { lvl:  8, q: "What will you do if you have a lot of free time next weekend? Do you have any special plans?" },
+        { lvl:  9, q: "If you won the lottery tomorrow, what would you do with the money and how would your life change?" },
+        { lvl: 10, q: "How long have you been studying English or working in your current job? What do you enjoy most about it?" },
+        { lvl: 11, q: "The pyramids in Egypt are a great mystery. How could they have been built without modern technology? Discuss what must have been done by the workers." },
+        { lvl: 12, q: "Think about a mistake you made in the past. What would have happened if you had done things differently?" },
+        { lvl: 13, q: "Do you believe that social media brings people closer together or makes them more isolated? Explain your point of view." },
+        { lvl: 14, q: "What are some things you look forward to doing in the next five years, and what do you hope to have achieved by then?" },
+        { lvl: 15, q: "Describe a global issue that you feel strongly about (like climate change or technology). What is being done to solve it, and what more should be done?" },
+        { lvl: 16, q: "If you had chosen a completely different career path or field of study when you were younger, how do you think your life would be different today?" },
+        { lvl: 17, q: "Some people argue that formal education is becoming less relevant in the modern world due to the internet. To what extent do you agree or disagree?" },
+        { lvl: 18, q: "Looking at your life so far, what are some things you wish you had known when you were younger, and why?" },
+        { lvl: 19, q: "It is often said that history repeats itself. Can you think of any current events that mirror the past? How can society avoid making the same mistakes?" },
+        { lvl: 20, q: "If you were responsible for solving a major global crisis, such as economic inequality or an environmental disaster, what policies would you implement and how would you handle the public reaction?" },
       ];
 
-      let currentIdx = 0,
-        results = [],
-        isRec = false,
-        stream,
-        studentPhoto = "",
-        micWasPressedForCurrentQuestion = false;
+      // ── Estado global ──────────────────────────────────────────────
+      let currentIdx = 0;
+      let results    = [];
+      let stream;
+      let studentPhoto = "";
+      let micWasPressedForCurrentQuestion = false;
 
-      // Verificar soporte de SpeechRecognition
-      const SpeechRecognitionAPI =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
+      // Estado del reconocimiento de voz
+      // recState puede ser: "idle" | "starting" | "running" | "stopping"
+      let recState = "idle";
+
+      // ── SpeechRecognition setup ────────────────────────────────────
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognitionAPI) {
-        alert(
-          "Tu navegador no soporta reconocimiento de voz. Por favor usa Google Chrome."
-        );
+        alert("Tu navegador no soporta reconocimiento de voz. Por favor usa Google Chrome.");
       }
       const recognition = new SpeechRecognitionAPI();
       recognition.lang = "en-US";
       recognition.continuous = true;
       recognition.interimResults = false;
 
-      // ✅ FIX: Manejo de errores del reconocimiento de voz
-      recognition.onerror = (e) => {
-        console.log("Speech recognition error:", e.error);
-        // No detener si es un error de "no-speech" (silencio) — solo reportar
-        if (e.error === "not-allowed" || e.error === "service-not-allowed") {
-          alert(
-            "Permiso de micrófono denegado. Por favor permite el acceso al micrófono en tu navegador."
-          );
-          isRec = false;
-          document.getElementById("m-btn").classList.remove("active");
-          document.getElementById("status-msg").innerText =
-            "Error de permiso - Revisa el micrófono";
+      // Cuando el navegador confirma que arrancó
+      recognition.onstart = () => {
+        recState = "running";
+      };
+
+      // Cuando el navegador confirma que se detuvo
+      recognition.onend = () => {
+        if (recState === "running") {
+          // Se detuvo solo (silencio largo) — reiniciar automáticamente
+          recState = "starting";
+          setTimeout(() => {
+            try {
+              recognition.start();
+            } catch (e) {
+              recState = "idle";
+              setMicUI(false);
+              document.getElementById("status-msg").innerText = "Toca el micrófono para reintentar";
+            }
+          }, 200);
         } else {
-          // Para otros errores, actualizar estado pero no bloquear
-          isRec = false;
-          document.getElementById("m-btn").classList.remove("active");
-          document.getElementById("status-msg").innerText =
-            "Toca el micrófono para reintentar";
+          recState = "idle";
         }
       };
 
-      // ✅ FIX: Cuando el reconocimiento termina solo (por silencio), reiniciar automáticamente
-      recognition.onend = () => {
-        if (isRec) {
-          // Se detuvo solo (silencio largo), reiniciar para seguir escuchando
-          try {
-            recognition.start();
-          } catch (e) {
-            console.log("Could not restart recognition:", e);
+      recognition.onerror = (e) => {
+        console.warn("Speech recognition error:", e.error);
+        if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+          alert("Permiso de micrófono denegado. Por favor permite el acceso al micrófono en tu navegador.");
+          recState = "idle";
+          setMicUI(false);
+          document.getElementById("status-msg").innerText = "Error de permiso - Revisa el micrófono";
+        }
+        // "no-speech" y "aborted" son normales — no tocar el estado
+      };
+
+      recognition.onresult = (e) => {
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+          if (e.results[i].isFinal) {
+            document.getElementById("t-area").value += e.results[i][0].transcript + " ";
           }
         }
       };
 
+      // ── Helpers UI ─────────────────────────────────────────────────
+      function setMicUI(active) {
+        const btn = document.getElementById("m-btn");
+        if (active) {
+          btn.classList.add("active");
+          document.getElementById("status-msg").innerText = "ESCUCHANDO...";
+        } else {
+          btn.classList.remove("active");
+        }
+      }
+
+      // ── Toggle micrófono (lógica única) ───────────────────────────
+      function toggleMic() {
+        if (recState === "idle") {
+          // Arrancar
+          recState = "starting";
+          try {
+            recognition.start();
+            setMicUI(true);
+            micWasPressedForCurrentQuestion = true;
+            document.getElementById("n-btn").disabled = false;
+          } catch (err) {
+            recState = "idle";
+            console.warn("Error starting recognition:", err);
+            document.getElementById("status-msg").innerText = "Error al iniciar - intenta de nuevo";
+          }
+        } else if (recState === "running") {
+          // Pausar
+          recState = "stopping";
+          recognition.stop();
+          setMicUI(false);
+          document.getElementById("status-msg").innerText = "PAUSADO";
+        }
+        // Si está "starting" o "stopping", ignorar el tap (transición en curso)
+      }
+
+      // ── Eventos del botón micrófono ────────────────────────────────
       window.onload = async () => {
         try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: false,
-          });
+          stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
           document.getElementById("v-setup").srcObject = stream;
         } catch (e) {
           alert("Acceso a cámara denegado.");
         }
 
         const mBtn = document.getElementById("m-btn");
-
-        // ✅ FIX PRINCIPAL: Usar solo "click" como toggle para compatibilidad con Chrome desktop.
-        // El problema original era que mousedown + click se disparaban juntos en Chrome desktop,
-        // haciendo que el micrófono arrancara y se detuviera inmediatamente.
-        // Bandera para evitar doble disparo en móvil (touchend + click nativo)
         let justTouched = false;
 
-        function toggleMic() {
-          if (!isRec) {
-            try {
-              recognition.start();
-              isRec = true;
-              mBtn.classList.add("active");
-              document.getElementById("status-msg").innerText = "ESCUCHANDO...";
-              micWasPressedForCurrentQuestion = true;
-              document.getElementById("n-btn").disabled = false;
-            } catch (err) {
-              console.log("Error starting recognition:", err);
-              document.getElementById("status-msg").innerText =
-                "Error al iniciar - intenta de nuevo";
-            }
-          } else {
-            recognition.stop();
-            isRec = false;
-            mBtn.classList.remove("active");
-            document.getElementById("status-msg").innerText = "PAUSADO";
-          }
-        }
-
-        // En móvil, touchend se dispara ANTES del click nativo del navegador.
-        // Usamos justTouched para que el click ignorado no ejecute toggleMic dos veces.
         mBtn.addEventListener("touchend", (e) => {
           e.preventDefault();
           justTouched = true;
@@ -368,63 +281,47 @@
           setTimeout(() => { justTouched = false; }, 500);
         });
 
-        mBtn.addEventListener("click", (e) => {
-          if (justTouched) return; // Ya fue manejado por touchend
+        mBtn.addEventListener("click", () => {
+          if (justTouched) return; // ya manejado por touchend
           toggleMic();
         });
       };
 
+      // ── Flujo del examen ───────────────────────────────────────────
       async function initTest() {
-        if (
-          !document.getElementById("stdName").value ||
-          !document.getElementById("stdId").value
-        )
+        if (!document.getElementById("stdName").value || !document.getElementById("stdId").value)
           return alert("Por favor ingresa tus datos.");
 
-        const video = document.getElementById("v-setup");
+        const video  = document.getElementById("v-setup");
         const canvas = document.getElementById("canvas-photo");
-        canvas
-          .getContext("2d")
-          .drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
         studentPhoto = canvas.toDataURL("image/jpeg").split(",")[1];
 
-        // Mantenemos la cámara encendida en el video de monitoreo
         document.getElementById("v-monitor").srcObject = stream;
-
         document.getElementById("setup").classList.add("hidden");
         document.getElementById("test").classList.remove("hidden");
         loadStep();
       }
 
       function loadStep() {
-        // Detener el reconocimiento al cambiar de pregunta
-        if (isRec) {
+        // Detener el micrófono al cambiar de pregunta
+        if (recState === "running" || recState === "starting") {
+          recState = "stopping";
           recognition.stop();
-          isRec = false;
-          document.getElementById("m-btn").classList.remove("active");
+          setMicUI(false);
         }
         document.getElementById("q-text").innerText = questions[currentIdx].q;
-        document.getElementById("t-area").value = "";
-        document.getElementById("n-btn").disabled = true;
-        document.getElementById("status-msg").innerText =
-          "Toca el micrófono para responder";
+        document.getElementById("t-area").value     = "";
+        document.getElementById("n-btn").disabled   = true;
+        document.getElementById("status-msg").innerText = "Toca el micrófono para responder";
         micWasPressedForCurrentQuestion = false;
       }
-
-      recognition.onresult = (e) => {
-        for (let i = e.resultIndex; i < e.results.length; ++i) {
-          if (e.results[i].isFinal) {
-            document.getElementById("t-area").value +=
-              e.results[i][0].transcript + " ";
-          }
-        }
-      };
 
       function saveAndNext() {
         results.push({
           lvl: questions[currentIdx].lvl,
-          q: questions[currentIdx].q,
-          a: document.getElementById("t-area").value,
+          q:   questions[currentIdx].q,
+          a:   document.getElementById("t-area").value,
         });
         if (currentIdx === questions.length - 1) {
           finish();
@@ -435,52 +332,33 @@
       }
 
       function finish() {
-        if (
-          document.getElementById("t-area").value &&
-          (!results.length ||
-            results[results.length - 1].lvl !== questions[currentIdx].lvl)
-        ) {
-          results.push({
-            lvl: questions[currentIdx].lvl,
-            q: questions[currentIdx].q,
-            a: document.getElementById("t-area").value,
-          });
+        const lastAnswer = document.getElementById("t-area").value;
+        if (lastAnswer && (!results.length || results[results.length - 1].lvl !== questions[currentIdx].lvl)) {
+          results.push({ lvl: questions[currentIdx].lvl, q: questions[currentIdx].q, a: lastAnswer });
         }
-
         document.getElementById("test").classList.add("hidden");
         document.getElementById("report").classList.remove("hidden");
-
         if (stream) stream.getTracks().forEach((t) => t.stop());
         upload();
       }
 
       async function upload() {
-        // Obtenemos el nivel máximo basado en el último nivel que el alumno respondió
-        const finalLevel =
-          results.length > 0 ? results[results.length - 1].lvl : 0;
-
+        const finalLevel = results.length > 0 ? results[results.length - 1].lvl : 0;
         const payload = {
-          name: document.getElementById("stdName").value,
-          id: document.getElementById("stdId").value,
-          sede: document.getElementById("sede").value,
-          fecha: new Date().toLocaleDateString(),
-          level: finalLevel,
+          name:       document.getElementById("stdName").value,
+          id:         document.getElementById("stdId").value,
+          sede:       document.getElementById("sede").value,
+          fecha:      new Date().toLocaleDateString(),
+          level:      finalLevel,
           transcript: results.map((r) => `[Lvl ${r.lvl}] ${r.a}`).join("\n\n"),
-          photo: studentPhoto,
+          photo:      studentPhoto,
         };
-
         try {
-          await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify(payload),
-          });
-          document.getElementById("upload-status").innerText =
-            "✅ ¡Prueba completada!";
-          document.getElementById("summary").innerHTML =
-            `Tus respuestas y foto han sido enviadas exitosamente.`;
+          await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+          document.getElementById("upload-status").innerText  = "✅ ¡Prueba completada!";
+          document.getElementById("summary").innerHTML = "Tus respuestas y foto han sido enviadas exitosamente.";
         } catch (e) {
-          document.getElementById("upload-status").innerText =
-            "❌ Error al enviar datos.";
+          document.getElementById("upload-status").innerText = "❌ Error al enviar datos.";
         }
       }
     </script>
