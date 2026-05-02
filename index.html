@@ -119,19 +119,56 @@
         document.getElementById('n-btn').disabled = true;
     }
 
-    function toggleMic() {
-        if(!isRec) {
-            recognition.start(); 
-            isRec = true;
-            document.getElementById('m-btn').classList.add('active');
-            document.getElementById('status-msg').innerText = "ESCUCHANDO...";
-        } else {
-            recognition.stop(); 
-            isRec = false;
-            document.getElementById('m-btn').classList.remove('active');
-            document.getElementById('status-msg').innerText = "PAUSADO";
+  let inactivityTimer; // Variable para los 3 segundos
+
+// 1. Modificamos la función toggleMic
+function toggleMic() {
+    if (!isRec) {
+        try {
+            recognition.start();
+            // No ponemos isRec = true aquí, dejaremos que onstart lo haga
+            resetInactivityTimer(); // Inicia el conteo de 3 segundos
+        } catch (e) {
+            console.error("Error al iniciar:", e);
         }
+    } else {
+        recognition.stop();
+        // No ponemos isRec = false aquí, dejaremos que onend lo haga
     }
+}
+
+// 2. Función para manejar el silencio (NUEVA)
+function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+        if (isRec) {
+            console.log("3 segundos de silencio: Deteniendo micrófono.");
+            recognition.stop();
+        }
+    }, 3000);
+}
+
+// 3. Sincronización real con el micrófono (MODIFICAR/AÑADIR ESTO)
+recognition.onstart = function() {
+    isRec = true;
+    document.getElementById('m-btn').classList.add('active');
+    document.getElementById('status-msg').innerText = "ESCUCHANDO...";
+};
+
+recognition.onend = function() {
+    isRec = false;
+    document.getElementById('m-btn').classList.remove('active');
+    document.getElementById('status-msg').innerText = "PAUSADO";
+    clearTimeout(inactivityTimer);
+};
+
+// 4. Reiniciar timer cada vez que el usuario hable (AÑADIR ESTO)
+recognition.onresult = function(event) {
+    resetInactivityTimer(); // El usuario habló, le damos 3 segundos más
+    
+    // Aquí sigue tu lógica actual para capturar el texto
+    // const text = event.results[0][0].transcript; ...
+};
 
     recognition.onresult = e => {
         // Acumulación de texto para permitir pausas al hablar
