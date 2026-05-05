@@ -1,69 +1,170 @@
-CEVAZ Placement Test - Photo Version
-Esta es una herramienta interactiva diseñada para facilitar la realización de pruebas de nivelación oral (placement tests). Esta versión específica utiliza soporte visual (fotos) para guiar el proceso de evaluación de forma dinámica y efectiva.
+# CEVAZ Placement Test - Versión Fotográfica
 
-🚀 Descripción del Proyecto
-El CEVAZ Placement Test - Photo Version es una aplicación web ligera (HTML/CSS/JS) pensada para ser utilizada por evaluadores en dispositivos móviles, tablets o computadoras. Permite gestionar la fase oral de una nivelación de idiomas de manera organizada.
+## ¿Qué es esta herramienta?
 
-Características principales:
-Interfaz Responsiva: Optimizado para funcionar en teléfonos y tablets.
+CEVAZ Placement Test es una aplicación web diseñada para realizar la **prueba de nivelación oral de inglés** de manera digital. Esta versión usa:
 
-Soporte Visual: Integración de imágenes para las pruebas orales.
+- **Fotografía del estudiante** - Se toma una foto inicial como registro
+- **Reconocimiento de voz** - Las respuestas se transcriben automáticamente
+- **Interfaz simple** - Funciona en celulares, tablets o computadoras
 
-Sin Dependencias Complejas: Ejecución directa desde el navegador (vía servidor).
+---
 
-GitHub Pages: Listo para ser desplegado directamente con un solo clic.
+## ¿Para qué sirve?
 
-🛠️ Instalación y Uso
-Ejecución Local
-Debido a la estructura de rutas y recursos, el proyecto debe ejecutarse en un entorno de servidor para que funcione correctamente (no se recomienda abrir el archivo HTML directamente desde la carpeta).
+La **prueba de nivelación oral** determina el nivel de inglés de cada estudiante (del 1 al 20) antes de comenzar sus estudios. El evaluador hace preguntas y el estudiante responde hablando; el sistema transcribe las respuestas automáticamente.
 
-Clona el repositorio:
+Esto permite:
 
-Bash
-git clone https://github.com/JocsLuis/CEVAZ-Placement-Test-Photo-Version.git
-Sube los archivos a tu servidor web (XAMPP, Apache, Nginx) o utiliza una extensión como "Live Server" en VS Code.
+- Evaluar la fluidez verbal del estudiante
+- Determinar el nivel apropiado para su curso
+- Registrar evidencia visual del estudiante
 
-¡Excelente punto! Es fundamental reconocer la autoría y el liderazgo del proyecto. Aquí tienes el README.md actualizado incluyendo a Ney Espina como creador y jefe:
+---
 
-CEVAZ Placement Test - Photo Version
-Esta es una herramienta interactiva diseñada para facilitar la realización de pruebas de nivelación oral (placement tests). Esta versión específica utiliza soporte visual (fotos) para guiar el proceso de evaluación de forma dinámica y efectiva.
+## Requisitos previos
 
-🚀 Descripción del Proyecto
-El CEVAZ Placement Test - Photo Version es una aplicación web ligera pensada para ser utilizada por evaluadores en dispositivos móviles, tablets o computadoras. Permite gestionar la fase oral de una nivelación de idiomas de manera organizada y profesional.
+Antes de usar la aplicación, asegúrate de tener:
 
-Características principales:
-Interfaz Responsiva: Totalmente optimizado para teléfonos y tablets.
+| Requisito       | Descripción                           |
+| --------------- | ------------------------------------- |
+| **Dispositivo** | Teléfono, tablet o computadora        |
+| **Navegador**   | Google Chrome (recomendado) o Edge    |
+| **Cámara**      | Webcam o cámara integrada funcional   |
+| **Micrófono**   | Micrófono disponible y funcionando    |
+| **Internet**    | Conexión estable                      |
+| **Permisos**    | Acceso a cámara y micrófono permitido |
 
-Soporte Visual: Integración de imágenes específicas para las pruebas orales.
+---
 
-Despliegue Rápido: Listo para ser probado a través de GitHub Pages.
+## Cómo usar la aplicación
 
-Estabilidad: Versión corregida para evitar fallas durante el ingreso de datos.
+### Paso 1: Preparación
 
-🛠️ Instalación y Uso
-Ejecución
-Para que el proyecto funcione correctamente, los archivos deben ser servidos desde un servidor web (no abrir directamente el archivo HTML localmente).
+Abre la aplicación en tu navegador:
 
-Clona el repositorio:
+**[Acceder al Placement Test](https://jocsluis.github.io/CEVAZ-Placement-Test-Photo-Version/)**
 
-Bash
-git clone https://github.com/JocsLuis/CEVAZ-Placement-Test-Photo-Version.git
-Sube los archivos a tu servidor de preferencia.
+**Importante:** Permite los permisos de cámara y micrófono cuando el navegador te los solicite.
 
-Demo en Vivo
-Puedes acceder a la versión de prueba aquí:
-👉 https://jocsluis.github.io/CEVAZ-Placement-Test-Photo-Version/
+### Paso 2: Registro inicial
 
-👥 Créditos y Colaboradores
-Director General Ney Espina: Creador del proyecto y Jefe de equipo.
+1. **Foto inicial** - Asegúrate de estar en un lugar iluminado y mira a la cámara
+2. **Nombre completo** - Ingresa el nombre completo del estudiante
+3. **Cédula de identidad** - Ingresa el número de cédula
+4. **Sede** - Selecciona la sede de CEVAZ
+5. Presiona **"EMPEZAR EXAMEN"**
 
-Kenny Ruz: Identificación de errores y pruebas de rendimiento en dispositivos móviles.
+### Paso 3: Durante la evaluación
 
-Ernesto Bracho: Desarrollo de mejoras en la versión final y optimización de escritura.
+1. La pregunta aparece en la pantalla
+2. Presiona el botón de **micrófono** para comenzar a grabar tu respuesta
+3. Habla claramente en inglés
+4. Presiona el botón de nuevo para detener la grabación
+5. Presiona **"SIGUIENTE PREGUNTA"** para continuar
+6. Repite para las 20 preguntas
 
-José Luis García: Montaje del repositorio y despliegue.
+### Paso 4: Finalización
 
-Notas de Versión
-Estado: Versión Final.
+1. Presiona **"FINALIZAR EVALUACIÓN AQUÍ"**
+2. Espera a que el sistema envíe los datos
+3. Verás un mensaje de confirmación
+4. Presiona **"SALIR"** para reiniciar y evaluar al siguiente estudiante
 
-Pruebas: Testeado con éxito en múltiples dispositivos para asegurar cero errores de escritura.
+---
+
+## Solución de problemas comunes
+
+### "Acceso a cámara denegado"
+
+**Causa:** El navegador no tiene permiso para usar la cámara.
+
+**Solución:**
+
+1. Haz clic en el icono de candado en la barra de direcciones del navegador
+2. Busca los permisos de cámara
+3. Permite el acceso del sitio
+4. Actualiza la página
+
+---
+
+### "Tu navegador no soporta reconocimiento de voz"
+
+**Causa:** Estás usando un navegador no compatible.
+
+**Solución:**
+
+1. Abre la aplicación en **Google Chrome**
+2. Chrome tiene reconocimiento de voz integrado
+3. Otros navegadores (Safari, Firefox) pueden no funcionar correctamente
+
+---
+
+### No puedo hablar / el micrófono no responde
+
+**Causa:** El micrófono está siendo usado por otra aplicación o no tiene permiso.
+
+**Solución:**
+
+1. Cierra otras aplicaciones que usen micrófono (WhatsApp, Zoom, etc.)
+2. Verifica los permisos del navegador (mira la solución de "cámara denegada")
+3. Actualiza la página e intenta de nuevo
+
+---
+
+### Las respuestas no se transcriben
+
+**Causa:** Estás hablando muy bajo o no hablas en inglés.
+
+**Solución:**
+
+1. Habla claramente y a volumen normal
+2. Asegúrate de responder en **inglés**
+3. Verifica que el botón de micrófono esté activo (verde y pulsando)
+4. Revisa que la respuesta aparezca en el cuadro de texto
+
+---
+
+### "Error al enviar datos"
+
+**Causa:** Sin conexión a internet o problema con el servidor.
+
+**Solución:**
+
+1. Verifica tu conexión a internet
+2. Actualiza la página
+3. Intenta de nuevo
+4. Si el problema persiste, contacta al soporte técnico
+
+---
+
+### La aplicación está muy lenta
+
+**Causa:** Demasiadas pestañas abiertas o conexión lenta.
+
+**Solución:**
+
+1. Cierra las pestañas innecesarias del navegador
+2. Reinicia el navegador
+3. Conéctate a una red más rápida (WiFi en lugar de datos móviles)
+
+---
+
+## Créditos y colaboradores
+
+**Equipo CEVAZ:**
+
+| Nombre               | Rol                                          |
+| -------------------- | -------------------------------------------- |
+| **Ney Espina**       | Director General / Creador del proyecto      |
+| **Kenny Ruz**        | Pruebas y validación en dispositivos móviles |
+| **Ernesto Bracho**   | Desarrollo y optimización                    |
+| **José Luis García** | Montaje del repositorio y despliegue         |
+
+---
+
+## Información de la versión
+
+- **Versión actual:** 1.0
+- **Última actualización:** Mayo 2026
+- **Estado:** Estable
